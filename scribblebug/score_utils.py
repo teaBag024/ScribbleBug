@@ -5,7 +5,7 @@ def get_recent_played(spider):
     if not scores: return []
 
     scores = scores.order_by('-last_played')[:20]
-    return list()
+    return list(scores.values("scribble"))
 
 def new_score(spider, scribble_name, score):
     scrib = Scribble.objects.filter(name=scribble_name, spider=spider)
