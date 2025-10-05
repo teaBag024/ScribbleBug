@@ -16,7 +16,7 @@ from multiprocessing.pool import AsyncResult
 from scribblebug.scribble_utils import create_scribble
 
 # helper functions
-from scribblebug import scribble_utils as scribtils
+from scribblebug import scribble_utils, score_utils
 
 # Yay, mutable global state
 task_status = {}
@@ -28,7 +28,8 @@ def index(request):
         request,
         "index.html",
         context={
-            "my_scribbles": scribtils.get_user_scribbles(current_spider) if current_spider.id else None
+            "my_scribbles": scribble_utils.get_user_scribbles(current_spider) if current_spider else None,
+            "recent_scribs": score_utils.get_recent_played(current_spider),
         },
     )
 
