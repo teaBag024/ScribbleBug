@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 import mysite
-from mysite.views import index, new_scribble, logout_view, task_stream
+from mysite.views import index, new_scribble, logout_view, task_stream, show_scribble, play_scribble
 
 urlpatterns = [
     path('', index, name="index"),
@@ -27,6 +27,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('scribbles/new', new_scribble),
     path('task-stream/<str:task_id>/', task_stream),
+    path('scribble/<int:scribble_id>', show_scribble),
+    path('play', play_scribble)
 
 
     # path("login", login, name="login"),

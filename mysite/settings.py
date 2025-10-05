@@ -151,6 +151,6 @@ SOCIAL_AUTH_AUTH0_SCOPE = [
     'profile',
     'email'
 ]
-LOGIN_URL = "/login/"
+LOGIN_URL = "/login/auth0/"
 LOGIN_REDIRECT_URL = "/"
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
