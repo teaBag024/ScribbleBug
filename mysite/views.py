@@ -3,6 +3,7 @@ import traceback
 import uuid
 
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 
 import json
@@ -13,6 +14,7 @@ from urllib.parse import quote_plus, urlencode
 import time
 from multiprocessing.pool import AsyncResult
 
+from scribblebug.models import Scribble
 from scribblebug.scribble_utils import create_scribble
 
 # helper functions
@@ -22,9 +24,10 @@ from scribblebug import scribble_utils, score_utils
 task_status = {}
 
 def index(request):
-    context={
-        "my_scribbles": scribble_utils.get_user_scribbles(request.user),
-        "recent_scribs": score_utils.get_recent_played(request.user),
+    current_spider = request.user
+    context = {
+        "my_scribbles": scribble_utils.get_user_scribbles(current_spider) if current_spider else None,
+        "recent_scribs": score_utils.get_recent_played(current_spider),
     } if request.user.is_authenticated else {}
 
     return render(
@@ -33,7 +36,7 @@ def index(request):
         context=context,
     )
 
-
+@login_required
 def new_scribble(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -106,3 +109,10 @@ def logout_view(request):
             quote_via=quote_plus,
         ),
     )
+
+def show_scribble(request, scribble_id):
+    s = Scribble.objects.get(id=scribble_id)
+    return HttpResponse(f"<!DOCTYPE html>{s.code}")
+
+def play_scribble(request):
+    return HttpResponse("Play scribble")
