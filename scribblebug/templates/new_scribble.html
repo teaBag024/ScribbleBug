@@ -12,14 +12,7 @@
 
 
         <div class="container title-container">
-            <div class = "row">
-                <div class="col-12">
-                    <div class="welcome-card">
-                    I am thinking of...
-                    </div>
-                </div>
                 <keyword-selector></keyword-selector>
-            </div>
 
         </div>
 
@@ -32,7 +25,7 @@
 /* Container */
 .keyword-selector {
     max-width: 600px;
-    margin: 0 auto;
+    margin: 0px auto;
 }
 
 /* Selected tags */
@@ -77,6 +70,7 @@
     border-radius: 8px;
     font-size: 14px;
     transition: border-color 0.2s;
+
 }
 
 .keyword-input:focus {
@@ -125,18 +119,21 @@
             // language=Vue
             template: `
                 <div class="keyword-selector col-12">
-<div class="chip-container">
-                    <div v-if="selected.length" class="selected-tags">
-                        <span v-for="vibe in selected" :key="vibe" class="tag">
-                            [[ vibe ]] <button @click="remove(vibe)">×</button>
-                        </span>
+                    <div class="welcome-card" style="margin-top: 25vh">
+                      I am thinking of...
                     </div>
-                    <div v-if="input" class="suggestions">
-                        <button v-for="vibe in filtered" :key="vibe" @click="addVibe(vibe)" class="suggestion-btn">
-                            [[ vibe ]]
-                        </button>
+                    <div class="chip-container col-12">
+                        <div v-if="selected.length" class="selected-tags">
+                            <span v-for="vibe in selected" :key="vibe" class="tag">
+                                [[ vibe ]] <button @click="remove(vibe)">×</button>
+                            </span>
+                        </div>
+                        <div v-if="input" class="suggestions">
+                            <button v-for="vibe in filtered" :key="vibe" @click="addVibe(vibe)" class="suggestion-btn">
+                                [[ vibe ]]
+                            </button>
+                        </div>
                     </div>
-</div>
 
 
                     <input v-model="input" @keydown.enter="add" placeholder="Type to search or add..." class="keyword-input">
@@ -154,14 +151,119 @@
                 return {
                     input: '',
                     selected: [],
-                    presets: ['Chill', 'Energetic', 'Cozy', 'Snake', 'Arcade', 'Spider', 'Insect', 'Cowboy']
+                    presets: [
+                        "games",
+                        "kids",
+                        "fun",
+                        "cool",
+                        "play",
+                        "free",
+                        "puzzle",
+                        "adventure",
+                        "action",
+                        "racing",
+                        "platform",
+                        "dressup",
+                        "building",
+                        "strategy",
+                        "simulation",
+                        "typing",
+                        "math",
+                        "science",
+                        "reading",
+                        "learn",
+                        "explore",
+                        "create",
+                        "solve",
+                        "collect",
+                        "jump",
+                        "run",
+                        "fly",
+                        "drive",
+                        "pet",
+                        "animal",
+                        "dog",
+                        "cat",
+                        "bird",
+                        "fish",
+                        "bug",
+                        "insect",
+                        "spider",
+                        "bear",
+                        "lion",
+                        "frog",
+                        "squirrel",
+                        "penguin",
+                        "monkey",
+                        "robot",
+                        "alien",
+                        "knight",
+                        "princess",
+                        "pirate",
+                        "hero",
+                        "wizard",
+                        "witch",
+                        "fairy",
+                        "chef",
+                        "doctor",
+                        "farmer",
+                        "rainforest",
+                        "ocean",
+                        "space",
+                        "city",
+                        "farm",
+                        "jungle",
+                        "castle",
+                        "island",
+                        "desert",
+                        "arctic",
+                        "cowboy",
+                        "western",
+                        "beach",
+                        "mine",
+                        "garden",
+                        "forest",
+                        "chill",
+                        "calm",
+                        "relax",
+                        "intense",
+                        "fast",
+                        "quick",
+                        "puzzling",
+                        "clever",
+                        "tricky",
+                        "easy",
+                        "hard",
+                        "happy",
+                        "funny",
+                        "silly",
+                        "cute",
+                        "crafty",
+                        "decor",
+                        "story",
+                        "music",
+                        "art",
+                        "color",
+                        "paint",
+                        "word",
+                        "number",
+                        "memory",
+                        "snake",
+                        "minesweeper",
+                        "solo",
+                        "single",
+                        "tap",
+                        "swipe",
+                        "match"
+                    ]
                 }
             },
             computed: {
                 filtered() {
-                    return this.presets.filter(v =>
+                    const allowed_len = 5 - this.selected.length;
+                    return (this.presets.filter(v =>
                         v.toLowerCase().includes(this.input.toLowerCase()) &&
-                        !this.selected.includes(v)
+                        !this.selected.includes(v)).slice(0, allowed_len)
                     )
                 }
             },
@@ -179,7 +281,7 @@
                     }
                 },
                 addVibe(vibe) {
-                    if (!this.selected.includes(vibe)) {
+                    if (!this.selected.includes(vibe) && this.selected.length <=5) {
                         this.selected.push(vibe);
                         this.input = '';
                     }
@@ -244,6 +346,4 @@
             }
         }).mount('#app');
     </script>
-
-<a role="button">Submit</a>
 {% endblock %}

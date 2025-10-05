@@ -22,15 +22,15 @@ from scribblebug import scribble_utils, score_utils
 task_status = {}
 
 def index(request):
-    current_spider = request.user
+    context={
+        "my_scribbles": scribble_utils.get_user_scribbles(request.user),
+        "recent_scribs": score_utils.get_recent_played(request.user),
+    } if request.user.is_authenticated else {}
 
     return render(
         request,
         "index.html",
-        context={
-            "my_scribbles": scribble_utils.get_user_scribbles(current_spider) if current_spider else None,
-            "recent_scribs": score_utils.get_recent_played(current_spider),
-        },
+        context=context,
     )
 
 
