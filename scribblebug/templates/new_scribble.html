@@ -118,7 +118,10 @@
             delimiters: ['[[', ']]'],
             // language=Vue
             template: `
-                <div class="keyword-selector col-12">
+              <div v-if="loading" class="loading-container">
+                <h1>Please wait</h1>
+              </div>
+              <div v-else class="keyword-selector col-12">
                     <div class="welcome-card" style="margin-top: 25vh">
                       I am thinking of...
                     </div>
@@ -141,7 +144,7 @@
                     <br>
                     <br>
 
-                    <button @click="submitForm" type="button" class="submit-btn btn btn-primary" :disabled="selected.length == 0">
+                    <button @click="submitForm" type="button" class="submit-btn btn btn-primary" :disabled="selected.length == 0 || loading">
                         Create
                     </button>
 
@@ -255,7 +258,9 @@
                         "tap",
                         "swipe",
                         "match"
-                    ]
+                    ],
+                    loading: false,
+                    statusMessage: '',
                 }
             },
             computed: {

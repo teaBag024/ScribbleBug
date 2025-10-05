@@ -17,6 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 import mysite
 from mysite.views import index, new_scribble, logout_view, task_stream, show_scribble, play_scribble
 
@@ -34,4 +37,4 @@ urlpatterns = [
     # path("login", login, name="login"),
     # path("logout", logout, name="logout"),
     # path("callback", callback, name="callback")
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

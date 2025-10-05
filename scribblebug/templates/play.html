@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<script type="module">
+    const iframe = document.getElementById("game-frame")
+    iframe.focus()
+    iframe.addEventListener('load', function() {
+        const iframeDoc = iframe.contentDocument;
+
+        iframeDoc.addEventListener('keydown', function(e) {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    });
+    function restartGame() {
+        console.log("restarting game")
+        iframe.contentWindow.location.reload()
+    }
+</script>
+{% endblock %}
+{% block content %}
+<h1>{{ scribble.name }}</h1>
+<iframe id="game-frame" title="{{ scribble.name }} frame" width="500" height="500" src="{{embed_url}}" tabindex="0"></iframe>
+<button class="btn btn-primary" onclick="const iframe = document.getElementById('game-frame');iframe.contentWindow.location.reload();iframe.focus()">Restart Game</button>
+{% endblock %}

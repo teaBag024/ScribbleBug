@@ -5,6 +5,7 @@ import uuid
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 import json
 from django.conf import settings
@@ -110,9 +111,14 @@ def logout_view(request):
         ),
     )
 
+@xframe_options_sameorigin
 def show_scribble(request, scribble_id):
     s = Scribble.objects.get(id=scribble_id)
     return HttpResponse(f"<!DOCTYPE html>{s.code}")
 
 def play_scribble(request):
+    scrib_id = request.GET.get('s', 1)
+    scribble = Scribble.objects.get(id=scrib_id)
+    embed_url = f"/scribble/{scribble.id}"
+    return render(request, "play.html", context=dict(scribble=scribble, embed_url=embed_url))
     return HttpResponse("Play scribble")

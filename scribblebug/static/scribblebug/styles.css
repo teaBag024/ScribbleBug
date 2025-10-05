@@ -20,9 +20,8 @@ div.scribble-carousel > article {
 
 
 .title-container{
-    height: 70vh;
+    height: 45vh;
     /*background: red;*/
-
     align-content: baseline;
     vertical-align: bottom;
     position: relative;
