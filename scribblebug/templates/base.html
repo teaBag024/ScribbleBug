@@ -62,6 +62,30 @@
             }
         }
     </script>
+    <script>
+        (function () {
+            'use strict'
+
+            const getPreferredTheme = () => {
+                // Check if system prefers dark mode
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+            }
+
+            const setTheme = theme => {
+                // Apply the theme to the <html> element
+                document.documentElement.setAttribute('data-bs-theme', theme)
+            }
+
+            // Set the theme on page load based on system preference
+            setTheme(getPreferredTheme())
+
+            // Listen for changes in system preference
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                setTheme(getPreferredTheme())
+            })
+        })()
+
+    </script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -77,6 +101,7 @@
             </form>
         </div>
     </nav>
+    
 <main class="container">
     {% block content %}
     {% endblock %}

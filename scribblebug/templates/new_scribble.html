@@ -89,7 +89,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 12px;
 }
 
 .suggestion-btn {
@@ -106,6 +105,14 @@
 .suggestion-btn:hover {
     background: #e5e7eb;
 }
+
+.chip-container{
+    height: 10vh;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
 </style>
     <script type="module">
         import { createApp } from 'vue';
@@ -115,26 +122,32 @@
             delimiters: ['[[', ']]'],
             // language=Vue
             template: `
-          <div class="keyword-selector">
-            <div v-if="selected.length" class="selected-tags">
-              <span v-for="vibe in selected" :key="vibe" class="tag">
-                [[ vibe ]] <button @click="remove(vibe)">×</button>
-              </span>
-            </div>
+                <div class="keyword-selector col-12">
+<div class="chip-container">
+                    <div v-if="selected.length" class="selected-tags">
+                        <span v-for="vibe in selected" :key="vibe" class="tag">
+                            [[ vibe ]] <button @click="remove(vibe)">×</button>
+                        </span>
+                    </div>
+                    <div v-if="input" class="suggestions">
+                        <button v-for="vibe in filtered" :key="vibe" @click="addVibe(vibe)" class="suggestion-btn">
+                            [[ vibe ]]
+                        </button>
+                    </div>
+</div>
 
-            <input v-model="input" @keydown.enter="add" placeholder="Type to search or add..." class="keyword-input">
 
-            <div v-if="input" class="suggestions">
-              <button v-for="vibe in filtered" :key="vibe" @click="addVibe(vibe)" class="suggestion-btn">
-                [[ vibe ]]
-              </button>
-            </div>
+                    <input v-model="input" @keydown.enter="add" placeholder="Type to search or add..." class="keyword-input">
 
-<button @click="submitForm" class="submit-btn" :disabled="selected.length == 0">
-            Create Scribble
-          </button>
-          </div>
-        `,
+                    <br>
+                    <br>
+
+                    <button @click="submitForm" type="button" class="col-2 submit-btn btn btn-primary" :disabled="selected.length == 0">
+                        Create
+                    </button>
+
+                </div>
+`,
             data() {
                 return {
                     input: '',
