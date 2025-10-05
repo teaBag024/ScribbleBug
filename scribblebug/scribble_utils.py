@@ -2,13 +2,14 @@
 from scribblebug.models import Scribble
 from scribblebug import gemini
 from datetime import datetime
+from django.contrib.auth.models import User
 
 def get_user_scribbles(spider):
     return list(Scribble.objects.filter(spider=spider))
 
 #input = keywords
-def create_scribble(spider, keywords): # pass in: user, kws as list
-
+def create_scribble(spider_id, keywords): # pass in: user, kws as list
+    spider = User.objects.get(id=spider_id)
     # name of scribble
     now = datetime.now()
     format_string = "%y%m%d_%H%M%S"

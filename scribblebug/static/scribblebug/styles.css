@@ -13,3 +13,35 @@ div.scribble-carousel {
 div.scribble-carousel > article {
     scroll-snap-align: start;
 }
+
+
+
+
+
+
+.title-container{
+    height: 70vh;
+    /*background: red;*/
+
+    align-content: baseline;
+    vertical-align: bottom;
+    position: relative;
+}
+.title-container .row{
+    vertical-align: bottom;
+    position: absolute;
+    bottom: 0px;
+    margin-bottom: 5vh;
+}
+.welcome-card{
+    font-family: "Boldonse", system-ui;
+    font-weight: 400;
+    font-size: xx-large;
+    font-style: normal;
+
+    padding-bottom: 2.5vh;
+}
+
+.scribble-card{
+    margin-bottom: 2.5vh;
+}

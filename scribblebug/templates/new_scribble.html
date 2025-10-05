@@ -1,10 +1,33 @@
 {% extends "base.html" %}
+
+{% load static %}
 {% block title %}New Scribble{% endblock %}
 {% block content %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'scribblebug/styles.css' %}">
+{% endblock %}
+
     <div id="app">
-    <h1>New Scribble</h1>
-        <keyword-selector></keyword-selector>
+    {% csrf_token %}
+
+
+        <div class="container title-container">
+            <div class = "row">
+                <div class="col-12">
+                    <div class="welcome-card">
+                    I am thinking of...
+                    </div>
+                </div>
+                <keyword-selector></keyword-selector>
+            </div>
+
+        </div>
+
     </div>
+
+
+
+
     <style>
 /* Container */
 .keyword-selector {
@@ -101,18 +124,22 @@
 
             <input v-model="input" @keydown.enter="add" placeholder="Type to search or add..." class="keyword-input">
 
-<div v-if="input" class="suggestions">
-            <button v-for="vibe in filtered" :key="vibe" @click="addVibe(vibe)" class="suggestion-btn">
-              [[ vibe ]]
-            </button>
-</div>
+            <div v-if="input" class="suggestions">
+              <button v-for="vibe in filtered" :key="vibe" @click="addVibe(vibe)" class="suggestion-btn">
+                [[ vibe ]]
+              </button>
+            </div>
+
+<button @click="submitForm" class="submit-btn" :disabled="selected.length == 0">
+            Create Scribble
+          </button>
           </div>
         `,
             data() {
                 return {
                     input: '',
                     selected: [],
-                    presets: ['Chill', 'Energetic', 'Cozy', 'Snake', 'Arcade']
+                    presets: ['Chill', 'Energetic', 'Cozy', 'Snake', 'Arcade', 'Spider', 'Insect', 'Cowboy']
                 }
             },
             computed: {
@@ -144,7 +171,54 @@
                 },
                 remove(vibe) {
                     this.selected = this.selected.filter(v => v !== vibe);
+                },
+        async submitForm() {
+            if (this.selected.length === 0) return;
+
+            this.loading = true;
+            this.statusMessage = 'Starting...';
+
+            const response = await fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ keywords: this.selected })
+            });
+             const data = await response.json();
+
+            if (response.ok) {
+                this.listenForUpdates(data.task_id);
+            } else {
+                alert('Error: ' + (data.error || 'Something went wrong'));
+                this.loading = false;
+            }
+            },
+        listenForUpdates(taskId) {
+            const eventSource = new EventSource(`/task-stream/${taskId}/`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.status === 'processing') {
+                    this.statusMessage = data.message || 'Processing...';
+                } else if (data.status === 'complete') {
+                    eventSource.close();
+                    window.location.href = data.redirect_url;
+                } else if (data.status === 'failed') {
+                    eventSource.close();
+                    alert('Processing failed');
+                    this.loading = false;
                 }
+            };
+
+            eventSource.onerror = () => {
+                eventSource.close();
+                alert('Connection lost');
+                this.loading = false;
+            };
+        }
             }
         };
 
@@ -156,36 +230,5 @@
         }).mount('#app');
     </script>
 
-<p>Choose the parameters of your minigame.</p>
-<form>
-<fieldset>
-    <legend>Theme</legend>
-    <input type="radio" name="theme" id="space" checked>
-    <label htmlFor="space">Space</label>
-    <input type="radio" name="theme" id="city" >
-    <label htmlFor="city">City</label>
-    <input type="radio" name="theme" id="desert" >
-    <label htmlFor="desert">Desert</label>
-    <input type="radio" name="theme" id="fantasy" >
-    <label htmlFor="fantasy">Fantasy</label>
-    <input type="radio" name="theme" id="spider" >
-    <label htmlFor="spider">Spider</label>
-</fieldset>
-    <fieldset>
-        <legend>Game Type</legend>
-        <input type="radio" name="type" id="arcade" checked>
-        <label htmlFor="arcade">Arcade</label>
-        <input type="radio" name="type" id="clicker" >
-        <label htmlFor="clicker">Clicker</label>
-        <input type="radio" name="type" id="platformer" >
-        <label htmlFor="platformer">Platformer</label>
-        <input type="radio" name="type" id="puzzle" >
-        <label htmlFor="puzzle">Puzzle</label>
-    </fieldset>
-<fieldset>
-    <legend>Extra Details</legend>
-    <input type="text" maxlength="50">
-</fieldset>
-<input type="submit">
-</form>
+<a role="button">Submit</a>
 {% endblock %}

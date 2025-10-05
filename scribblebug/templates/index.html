@@ -1,35 +1,63 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'scribblebug/styles.css' %}">{% endblock %}
+    <link rel="stylesheet" href="{% static 'scribblebug/styles.css' %}">
+{% endblock %}
 {% block content %}
     {% if request.user.is_authenticated %}
-        <h1>Welcome, {{ request.user.username }}!</h1>
-        <a role="button" href="/scribbles/new" style="display: block; margin: 0 0 20px 0">Create new Scribble</a>
-        <article>
-            <header>Your Scribbles</header>
-            <div class="scribble-carousel">
-                {% for s in my_scribbles %}
-                    <article>
-                        {{ s.name }}
-                    </article>
-                {% endfor %}
-                <article>
-                    test
-                </article>
+        <div>
+            <div class="container title-container">
+                <div class = "row">
+                    <div class="col-12">
+                        <div class="welcome-card">
+                        Welcome, {{ request.user.username }}!
+                        </div>
+                        <a class="btn btn-primary" type="button" href="/scribbles/new">
+                            Create new Scribble
+                        </a>
+                    </div>
+                </div>
+
             </div>
-        </article>
-        <article>
-            <header>Recently Played</header>
-            <div class="container scribble-carousel">
-                <article>
-                    help
-                </article>
-                <article>
-                    test
-                </article>
+        <br>
+            <div class="card">
+                <div class="card-header">
+                    Recently Played
+                </div>
+                <div class="card-body">
+                    <div class="container scribble-carousel">
+                        <div class="card" style="width: 18rem;">
+                            <img src="..." class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </article>
+        <br>
+        <br>
+        <br>
+            <div class="container">
+                <h1>Your Scribbles</h1>
+                <div class="row justify-content-md-center">
+                    {% for s in my_scribbles %}
+                        <div class="scribble-card col-md-3 col-sm-12">
+                            <div class="card" >
+                                <img src="..." class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        {{ s.name }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
     {% else %}
         <article style="text-align: center">
             <span class="guest-banner">Log in to create a Scribble!</span>

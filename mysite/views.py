@@ -1,5 +1,5 @@
 from django.contrib.auth import logout
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 
 # From Auth0 Django Tutorial
 import json
@@ -8,6 +8,9 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from urllib.parse import quote_plus, urlencode
+import time
+from multiprocessing.pool import AsyncResult
+from scribblebug.tasks import create_scribble_task
 
 
 # helper functions
@@ -18,7 +21,6 @@ def index(request):
     # return HttpResponse("Hello, world.")
 
     current_spider = request.user
-    
 
     return render(
         request,
@@ -32,7 +34,32 @@ def index(request):
     )
 
 def new_scribble(request):
-    return render(request, "new_scribble.html")
+    if request.method == "POST":
+        data = json.loads(request.body)
+        keywords = data.get('keywords', [])
+
+        if not keywords:
+            return JsonResponse({'error': 'No keywords provided'}, status=400)
+
+        # Start background task
+        task = create_scribble_task.delay(request.user.id, keywords)
+        return JsonResponse({'task_id': task.id})
+    else:
+        return render(request, "new_scribble.html")
+
+def task_stream(request, task_id):
+    def event_stream():
+        task = AsyncResult(task_id)
+        while not task.ready():
+            yield f"data: {json.dumps({'status': 'processing', 'message': 'Working...'})}\n\n"
+            time.sleep(2)
+
+        if task.successful():
+            yield f"data: {json.dumps({'status': 'complete', 'redirect_url': f'/scribble/{task.result}/'})}\n\n"
+        else:
+            yield f"data: {json.dumps({'status': 'failed'})}\n\n"
+
+    return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
 
 #
 # # OAuth Set up

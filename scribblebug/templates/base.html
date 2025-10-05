@@ -11,21 +11,49 @@
     <!-- TODO: make a real favicon -->
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='100' font-size='100'>🕷️</text></svg>">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+{#    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">#}
+
+{#font#}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Rubik+Scribble&display=swap" rel="stylesheet">
+
+    {#bootstrap#}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+{#    <style>#}
+{#        .brand-head {#}
+{#            text-decoration: inherit;#}
+{#            color: inherit;#}
+{#            font-size: 2rem;#}
+{#            font-family: 'Segoe Print', 'Bradley Hand', Chilanka, TSCu_Comic, casual, cursive;#}
+{#            white-space: nowrap;#}
+{#        }#}
+{##}
+{#        .brand-head::before {#}
+{#            content: "🕷️🖌️";#}
+{#            padding: 0 10px 0 0;#}
+{#        }#}
+{#    </style>#}
+
     <style>
-        .brand-head {
-            text-decoration: inherit;
-            color: inherit;
-            font-size: 2rem;
-            font-family: 'Segoe Print', 'Bradley Hand', Chilanka, TSCu_Comic, casual, cursive;
-            white-space: nowrap;
+        html{
+            {#background: aquamarine;#}
+        }
+        .navbar-brand h1{
+            font-family: "Rubik Scribble", system-ui;
+            font-weight: 800;
+            font-style: normal;
+
+            margin-left: 5vw;
         }
 
-        .brand-head::before {
-            content: "🕷️🖌️";
-            padding: 0 10px 0 0;
+        .footer{
+            height:30vh;
         }
     </style>
+
     {% block extra_css %}{% endblock %}
     <script type="importmap">
         {
@@ -36,21 +64,23 @@
     </script>
 </head>
 <body>
-<header>
-    <div class="container" style="display: flex; justify-content: space-between">
-        <a href="/" class="brand-head">ScribbleBug</a>
-        <nav>
-            {% if request.user.is_authenticated %}
-                <ul><a href="{% url 'logout' %}">Logout</a></ul>
-            {% else %}
-                <ul><a href="{% url 'social:begin' 'auth0' %}">Login</a></ul>
-            {% endif %}
-        </nav>
-    </div>
-</header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" ><h1>ScribbleBug</h1></a>
+
+            <form>
+                {% if request.user.is_authenticated %}
+                    <a class="btn btn-primary" type="button href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a class="btn btn-primary" type="button href="{% url 'social:begin' 'auth0' %}">Login</a>
+                {% endif %}
+            </form>
+        </div>
+    </nav>
 <main class="container">
     {% block content %}
     {% endblock %}
 </main>
+    <div class="footer"></div>
 </body>
 </html>
