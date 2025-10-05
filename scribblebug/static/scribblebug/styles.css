@@ -44,3 +44,7 @@ div.scribble-carousel > article {
 .scribble-card{
     margin-bottom: 2.5vh;
 }
+
+.scribble-card > a {
+    color: inherit;
+}

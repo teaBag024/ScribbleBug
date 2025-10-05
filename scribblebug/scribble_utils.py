@@ -22,13 +22,10 @@ def create_scribble(spider, keywords): # pass in: user, kws as list
         code = code[start_index:end_index]
     else: code = "<html><body>Out of Juice :(</body></html>"
 
-    return create_scribble_indb(name, spider, code)
-
-
-def create_scribble_indb(name, author, code, chat_hist=""):
     s = Scribble(name=name,
-                 spider=author,
-                 chat_history=chat_hist,
+                 spider=spider,
+                 chat_history="",
                  code=code)
+    gemini.generate(keywords, s)
     s.save()
     return s

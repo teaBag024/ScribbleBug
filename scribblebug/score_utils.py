@@ -13,6 +13,16 @@ def get_recent_played(spider):
 def get_scores_of_scrib(scrib):
     return list(Score.objects.filter(scribble=scrib).order_by('score')[:10])
 
+def update_play(scrib_id, spider):
+
+    s = Score.objects.filter(scribble_id=scrib_id, spider=spider)
+    if s:
+        s=s.first()
+        s.save()
+    else:
+        scribble = Scribble.objects.filter(id=scrib_id).first()
+        s = Score( score=0, scribble=scribble, spider=spider)
+        s.save()
 
 def new_score(spider, scribble_id, score):
     scrib = Scribble.objects.filter(id=scribble_id, spider=spider)

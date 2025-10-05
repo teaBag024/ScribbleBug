@@ -119,6 +119,7 @@ def show_scribble(request, scribble_id):
 def play_scribble(request):
     scrib_id = request.GET.get('s', 1)
     scribble = Scribble.objects.get(id=scrib_id)
+    score_utils.update_play(scrib_id, request.user)
     embed_url = f"/scribble/{scribble.id}"
     return render(request, "play.html", context=dict(scribble=scribble, embed_url=embed_url))
     return HttpResponse("Play scribble")

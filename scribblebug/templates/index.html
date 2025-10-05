@@ -28,10 +28,12 @@
                     <div class="container scribble-carousel">
                         {% for s in recent_scribs %}
                             <div class="card" style="width: 18rem;">
-                                <img src="..." class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <p class="card-text">{{ s.name }}</p>
-                                </div>
+                                <a href="/play?s={{ s.id }}" class="card-text">
+                                    <img src="{{ s.image.url }}" class="card-img-top" alt="{{ s.name }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ s.name }}</h5>
+                                    </div>
+                                </a>
                             </div>
                         {% endfor %}
                     </div>
@@ -46,12 +48,12 @@
                     {% for s in my_scribbles %}
                         <div class="scribble-card col-md-3 col-sm-12">
                             <div class="card" >
-                                <img src="..." class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        {{ s.name }}
-                                    </p>
-                                </div>
+                                <a href="/play?s={{ s.id }}" class="card-text">
+                                    <img src="{{ s.image.url }}" class="card-img-top" alt="{{ s.name }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ s.name }}</h5>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     {% endfor %}
@@ -59,10 +61,11 @@
             </div>
 
         </div>
+        <div class="footer"></div>
 
     {% else %}
-        <article style="text-align: center">
+        <div class="welcome-card" style="margin-top:35vh; text-align: center">
             <span class="guest-banner">Log in to create a Scribble!</span>
-        </article>
+        </div>
     {% endif %}
 {% endblock %}

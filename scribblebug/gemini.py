@@ -2,6 +2,9 @@
 import base64
 import mimetypes
 import os
+import uuid
+
+from django.core.files.base import ContentFile
 from google import genai
 from google.genai import types
 
@@ -132,6 +135,7 @@ s for down,
 d for right
 space for jump
 e for action
+THE GAME MUST BE 400px by 450px.
 The game does not have to keep to just these keys or use all of them. Make sure the keybind is actually working the was intended.
 If you cannot determine what type of game the user wants, return a html page that says "whoops, outta brain juice". Write code to build the game compatible for web browser. 
 Jump to continue
@@ -164,7 +168,7 @@ Provide only the code in the following format. Return as one html file.
     <style>/*style*/</style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="500" height="500"></canvas>
+    <canvas id="gameCanvas" width="400" height="450"></canvas>
     <script>/*script*/</script>
 </body>
 </html>"""),
@@ -186,7 +190,8 @@ def save_binary_file(file_name, data):
     print(f"File saved to to: {file_name}")
 
 
-def generate(kws):
+def generate(kws, game_instance=None):
+    print(f"API KEY: {os.environ.get("GEMINI_API_KEY")}")
     client = genai.Client(
         api_key=os.environ.get("GEMINI_API_KEY"),
     )
@@ -209,8 +214,6 @@ def generate(kws):
                 \"Generate me a game with /*keywords*/\" Generate an image of size 200px by 200px. What type of came they mean to create. Do not add any other text, just output the image"""),
         ],
     )
-
-    file_index = 0
     for chunk in client.models.generate_content_stream(
             model=model,
             contents=contents,
@@ -223,17 +226,19 @@ def generate(kws):
         ):
             continue
         if chunk.candidates[0].content.parts[0].inline_data and chunk.candidates[0].content.parts[0].inline_data.data:
-            file_name = f"{file_index}"
-            file_index += 1
+
             inline_data = chunk.candidates[0].content.parts[0].inline_data
             data_buffer = inline_data.data
-            file_extension = mimetypes.guess_extension(inline_data.mime_type)
-            save_binary_file(f"{file_name}{file_extension}", data_buffer)
+            file_extension = mimetypes.guess_extension(inline_data.mime_type) or '.png'
+            file_name = f"game_{uuid.uuid4()}{file_extension}"
+            content_file = ContentFile(data_buffer)
 
-            return f"{file_name}{file_extension}"
-        else:
-            print(chunk.text)
-            return "help.png"
+            if game_instance:
+                game_instance.image.save(file_name, content_file, save=True)
+                return game_instance
+            else:
+                return content_file, file_name
+    return None
 
 
 if __name__ == "__main__":

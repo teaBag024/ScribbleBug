@@ -11,7 +11,7 @@ class Scribble(models.Model):
         on_delete=models.CASCADE,
         related_name="spider_scribble"
     )
-    image=models.ImageField(upload_to='images/', null=True)
+    image=models.ImageField(upload_to='images/', default='images/default.png')
     chat_history = models.JSONField(default=list, blank=True)
     code = models.CharField(max_length=30000)
 
