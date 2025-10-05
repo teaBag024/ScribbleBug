@@ -8,8 +8,7 @@ def get_user_scribbles(spider):
     return list(Scribble.objects.filter(spider=spider))
 
 #input = keywords
-def create_scribble(spider_id, keywords): # pass in: user, kws as list
-    spider = User.objects.get(id=spider_id)
+def create_scribble(spider, keywords): # pass in: user, kws as list
     # name of scribble
     now = datetime.now()
     format_string = "%y%m%d_%H%M%S"
@@ -23,7 +22,7 @@ def create_scribble(spider_id, keywords): # pass in: user, kws as list
         code = code[start_index:end_index]
     else: code = "<html><body>Out of Juice :(</body></html>"
 
-    create_scribble_indb(name, spider, code)
+    return create_scribble_indb(name, spider, code)
 
 
 def create_scribble_indb(name, author, code, chat_hist=""):
@@ -32,3 +31,4 @@ def create_scribble_indb(name, author, code, chat_hist=""):
                  chat_history=chat_hist,
                  code=code)
     s.save()
+    return s

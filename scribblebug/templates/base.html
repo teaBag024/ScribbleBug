@@ -79,14 +79,11 @@
                 <img src="{% static '../static/scribblebug/scrib.png' %}" alt="scrib" width="60" height="60">
                 <span>ScribbleBug</span>
             </a>
-
-            <form>
-                {% if request.user.is_authenticated %}
-                    <a class="btn btn-primary" type="button href="{% url 'logout' %}">Logout</a>
-                {% else %}
-                    <a class="btn btn-primary" type="button href="{% url 'social:begin' 'auth0' %}">Login</a>
-                {% endif %}
-            </form>
+            {% if request.user.is_authenticated %}
+                <a class="btn btn-primary" type="button" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a class="btn btn-primary" type="button" href="{% url 'social:begin' 'auth0' %}">Login</a>
+            {% endif %}
         </div>
     </nav>
 

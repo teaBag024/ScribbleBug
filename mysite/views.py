@@ -1,86 +1,97 @@
+import threading
+import traceback
+import uuid
+
 from django.contrib.auth import logout
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 
-# From Auth0 Django Tutorial
 import json
-from authlib.integrations.django_client import OAuth
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from urllib.parse import quote_plus, urlencode
 import time
 from multiprocessing.pool import AsyncResult
-from scribblebug.tasks import create_scribble_task
 
+from scribblebug.scribble_utils import create_scribble
 
 # helper functions
 from scribblebug import scribble_utils as scribtils
 
+# Yay, mutable global state
+task_status = {}
 
 def index(request):
-    # return HttpResponse("Hello, world.")
-
     current_spider = request.user
 
     return render(
         request,
         "index.html",
         context={
-            "session": request.session.get("user"),
-            "pretty": json.dumps(request.session.get("user"), indent=4),
-            "nums": list(range(20)),
-            "my_scribbles": scribtils.get_user_scribbles(current_spider)
+            "my_scribbles": scribtils.get_user_scribbles(current_spider) if current_spider.id else None
         },
     )
+
 
 def new_scribble(request):
     if request.method == "POST":
         data = json.loads(request.body)
         keywords = data.get('keywords', [])
 
-        if not keywords:
-            return JsonResponse({'error': 'No keywords provided'}, status=400)
+        # Generate task ID
+        task_id = str(uuid.uuid4())
+        task_status[task_id] = {'status': 'processing', 'message': 'Starting...'}
 
-        # Start background task
-        task = create_scribble_task.delay(request.user.id, keywords)
-        return JsonResponse({'task_id': task.id})
+        # Run in background thread
+        thread = threading.Thread(
+            target=process_scribble_background,
+            args=(task_id, request.user, keywords)
+        )
+        thread.daemon = True
+        thread.start()
+
+        return JsonResponse({'task_id': task_id})
     else:
         return render(request, "new_scribble.html")
 
-def task_stream(request, task_id):
-    def event_stream():
-        task = AsyncResult(task_id)
-        while not task.ready():
-            yield f"data: {json.dumps({'status': 'processing', 'message': 'Working...'})}\n\n"
-            time.sleep(2)
+def process_scribble_background(task_id, user, keywords):
+    """Runs in background thread"""
+    try:
+        # Update status
+        task_status[task_id] = {'status': 'processing', 'message': 'Creating scribble...'}
 
-        if task.successful():
-            yield f"data: {json.dumps({'status': 'complete', 'redirect_url': f'/scribble/{task.result}/'})}\n\n"
-        else:
-            yield f"data: {json.dumps({'status': 'failed'})}\n\n"
+        # Create scribble
+        scribble = create_scribble(user, keywords)
+
+        # Mark complete
+        task_status[task_id] = {
+            'status': 'complete',
+            'scribble_id': scribble.id
+        }
+    except Exception as e:
+        print(traceback.format_exc())
+        task_status[task_id] = {'status': 'failed', 'error': str(e)}
+
+def task_stream(request, task_id):
+    """SSE endpoint"""
+    def event_stream():
+        while True:
+            status = task_status.get(task_id, {'status': 'processing', 'message': 'Working...'})
+
+            if status['status'] == 'complete':
+                yield f"data: {json.dumps({'status': 'complete', 'redirect_url': f'/scribble/{status['scribble_id']}'})}\n\n"
+                break
+            elif status['status'] == 'failed':
+                yield f"data: {json.dumps({'status': 'failed'})}\n\n"
+                break
+            else:
+                yield f"data: {json.dumps({'status': 'processing', 'message': status.get('message', 'Working...')})}\n\n"
+
+            time.sleep(2)
 
     return StreamingHttpResponse(event_stream(), content_type='text/event-stream')
 
-#
-# # OAuth Set up
-# oauth = OAuth()
-# oauth.register(
-#     "auth0",
-#     client_id=settings.AUTH0_CLIENT_ID,
-#     client_secret=settings.AUTH0_CLIENT_SECRET,
-#     client_kwargs={
-#         "scope": "openid profile email",
-#     },
-#     server_metadata_url=f"https://{settings.AUTH0_DOMAIN}/.well-known/openid-configuration",
-# )
-# def login(request):
-#     return oauth.auth0.authorize_redirect(
-#         request, request.build_absolute_uri(reverse("callback"))
-#     )
-# def callback(request):
-#     token = oauth.auth0.authorize_access_token(request)
-#     request.session["user"] = token
-#     return redirect(request.build_absolute_uri(reverse("index")))
+
 def logout_view(request):
     logout(request)
 
@@ -93,4 +104,4 @@ def logout_view(request):
             },
             quote_via=quote_plus,
         ),
-        )
+    )
