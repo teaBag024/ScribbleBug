@@ -23,4 +23,5 @@
 <h1>{{ scribble.name }}</h1>
 <iframe id="game-frame" title="{{ scribble.name }} frame" width="500" height="500" src="{{embed_url}}" tabindex="0"></iframe>
 <button class="btn btn-primary" onclick="const iframe = document.getElementById('game-frame');iframe.contentWindow.location.reload();iframe.focus()">Restart Game</button>
+    <p>Control your Scribble with the <kbd>W</kbd>, <kbd>A</kbd> <kbd>S</kbd>, <kbd>D</kbd> keys for movement! <kbd>Space</kbd> and <kbd>E</kbd> may perform actions.</p>
 {% endblock %}

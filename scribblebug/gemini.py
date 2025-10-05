@@ -133,7 +133,7 @@ d for right
 space for jump
 e for action
 The game does not have to keep to just these keys or use all of them. Make sure the keybind is actually working the was intended.
-If you cannot determine what type of game the user wants, return a html page that says \"whoops, outta brain juice\". Write code to build the game compatible for web browser. 
+If you cannot determine what type of game the user wants, return a html page that says "whoops, outta brain juice". Write code to build the game compatible for web browser. 
 Jump to continue
 
 In a follow-up prompt
@@ -164,7 +164,7 @@ Provide only the code in the following format. Return as one html file.
     <style>/*style*/</style>
 </head>
 <body>
-    <canvas id=\"gameCanvas\"/*width and height*/></canvas>
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
     <script>/*script*/</script>
 </body>
 </html>"""),
@@ -202,8 +202,7 @@ def generate(kws):
     ]
     generate_content_config = types.GenerateContentConfig(
         response_modalities=[
-            "IMAGE",
-            "TEXT",
+            "IMAGE"
         ],
         system_instruction=[
             types.Part.from_text(text="""You are an artist. The user will prompt you with a 5 or less keywords that describes a game in the form of 

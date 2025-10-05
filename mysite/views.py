@@ -84,7 +84,7 @@ def task_stream(request, task_id):
             status = task_status.get(task_id, {'status': 'processing', 'message': 'Working...'})
 
             if status['status'] == 'complete':
-                yield f"data: {json.dumps({'status': 'complete', 'redirect_url': f'/scribble/{status['scribble_id']}'})}\n\n"
+                yield f"data: {json.dumps({'status': 'complete', 'redirect_url': f'/play?s={status['scribble_id']}'})}\n\n"
                 break
             elif status['status'] == 'failed':
                 yield f"data: {json.dumps({'status': 'failed'})}\n\n"
