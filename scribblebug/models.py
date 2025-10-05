@@ -23,3 +23,4 @@ class Score(models.Model):
     )
     scribble = models.ForeignKey(Scribble, on_delete=models.CASCADE)
     score = models.IntegerField(default=0)
+    last_played = models.DateTimeField(auto_now=True)

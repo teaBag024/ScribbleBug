@@ -22,31 +22,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
-{#    <style>#}
-{#        .brand-head {#}
-{#            text-decoration: inherit;#}
-{#            color: inherit;#}
-{#            font-size: 2rem;#}
-{#            font-family: 'Segoe Print', 'Bradley Hand', Chilanka, TSCu_Comic, casual, cursive;#}
-{#            white-space: nowrap;#}
-{#        }#}
-{##}
-{#        .brand-head::before {#}
-{#            content: "🕷️🖌️";#}
-{#            padding: 0 10px 0 0;#}
-{#        }#}
-{#    </style>#}
-
     <style>
         html{
             {#background: aquamarine;#}
         }
-        .navbar-brand h1{
+        .navbar-brand span{
             font-family: "Rubik Scribble", system-ui;
             font-weight: 800;
             font-style: normal;
-
-            margin-left: 5vw;
+            font-size: xx-large;
+            vertical-align: bottom;
         }
 
         .footer{
@@ -90,7 +75,10 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/" ><h1>ScribbleBug</h1></a>
+            <a class="navbar-brand" href="/" >
+                <img src="{% static '../static/scribblebug/scrib.png' %}" alt="scrib" width="60" height="60">
+                <span>ScribbleBug</span>
+            </a>
 
             <form>
                 {% if request.user.is_authenticated %}
@@ -101,7 +89,7 @@
             </form>
         </div>
     </nav>
-    
+
 <main class="container">
     {% block content %}
     {% endblock %}

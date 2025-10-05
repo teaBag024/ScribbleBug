@@ -100,6 +100,8 @@
     cursor: pointer;
     color: #374151;
     transition: background 0.2s;
+
+    vertical-align: bottom;
 }
 
 .suggestion-btn:hover {
@@ -142,7 +144,7 @@
                     <br>
                     <br>
 
-                    <button @click="submitForm" type="button" class="col-2 submit-btn btn btn-primary" :disabled="selected.length == 0">
+                    <button @click="submitForm" type="button" class="submit-btn btn btn-primary" :disabled="selected.length == 0">
                         Create
                     </button>
 
