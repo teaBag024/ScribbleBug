@@ -14,7 +14,7 @@ from scribblebug.tasks import create_scribble_task
 
 
 # helper functions
-from scribblebug import scribble_utils as scribtils
+from scribblebug import scribble_utils, score_utils
 
 
 def index(request):
@@ -29,7 +29,8 @@ def index(request):
             "session": request.session.get("user"),
             "pretty": json.dumps(request.session.get("user"), indent=4),
             "nums": list(range(20)),
-            "my_scribbles": scribtils.get_user_scribbles(current_spider)
+            "my_scribbles": scribble_utils.get_user_scribbles(current_spider),
+            "recent_scribs": score_utils.get_recent_played(current_spider),
         },
     )
 
