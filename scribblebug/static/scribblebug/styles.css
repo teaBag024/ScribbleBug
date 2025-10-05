@@ -1,0 +1,15 @@
+.guest-banner {
+    font-size: 40px;
+}
+
+div.scribble-carousel {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+}
+
+div.scribble-carousel > article {
+    scroll-snap-align: start;
+}

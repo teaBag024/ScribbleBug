@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'scribblebug/styles.css' %}">{% endblock %}
+{% block content %}
+    {% if request.user.is_authenticated %}
+        <h1>Welcome, {{ request.user.username }}!</h1>
+        <a role="button" href="/scribbles/new" style="display: block; margin: 0 0 20px 0">Create new Scribble</a>
+        <article>
+            <header>Your Scribbles</header>
+            <div class="scribble-carousel">
+                {% for s in my_scribbles %}
+                    <article>
+                        {{ s.name }}
+                    </article>
+                {% endfor %}
+                <article>
+                    test
+                </article>
+            </div>
+        </article>
+        <article>
+            <header>Recently Played</header>
+            <div class="container scribble-carousel">
+                <article>
+                    help
+                </article>
+                <article>
+                    test
+                </article>
+            </div>
+        </article>
+    {% else %}
+        <article style="text-align: center">
+            <span class="guest-banner">Log in to create a Scribble!</span>
+        </article>
+    {% endif %}
+{% endblock %}

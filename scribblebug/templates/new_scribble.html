@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}New Scribble{% endblock %}
+{% block content %}
+    <div id="app">
+    <h1>New Scribble</h1>
+        <keyword-selector></keyword-selector>
+    </div>
+    <style>
+/* Container */
+.keyword-selector {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Selected tags */
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tag {
+    background: #6366f1;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tag button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.8;
+}
+
+.tag button:hover {
+    opacity: 1;
+}
+
+/* Input */
+.keyword-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.keyword-input:focus {
+    outline: none;
+    border-color: #6366f1;
+}
+
+/* Suggestions */
+.suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.suggestion-btn {
+    background: #f3f4f6;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #374151;
+    transition: background 0.2s;
+}
+
+.suggestion-btn:hover {
+    background: #e5e7eb;
+}
+</style>
+    <script type="module">
+        import { createApp } from 'vue';
+
+        // Keyword Selector Component
+        const SelectorComponent = {
+            delimiters: ['[[', ']]'],
+            // language=Vue
+            template: `
+          <div class="keyword-selector">
+            <div v-if="selected.length" class="selected-tags">
+              <span v-for="vibe in selected" :key="vibe" class="tag">
+                [[ vibe ]] <button @click="remove(vibe)">×</button>
+              </span>
+            </div>
+
+            <input v-model="input" @keydown.enter="add" placeholder="Type to search or add..." class="keyword-input">
+
+<div v-if="input" class="suggestions">
+            <button v-for="vibe in filtered" :key="vibe" @click="addVibe(vibe)" class="suggestion-btn">
+              [[ vibe ]]
+            </button>
+</div>
+          </div>
+        `,
+            data() {
+                return {
+                    input: '',
+                    selected: [],
+                    presets: ['Chill', 'Energetic', 'Cozy', 'Snake', 'Arcade']
+                }
+            },
+            computed: {
+                filtered() {
+                    return this.presets.filter(v =>
+                        v.toLowerCase().includes(this.input.toLowerCase()) &&
+                        !this.selected.includes(v)
+                    )
+                }
+            },
+            methods: {
+                add() {
+                    const value = this.input.trim();
+                    if (!value) return;
+
+                    // Add first filtered match, or create custom
+                    const toAdd = this.filtered.length > 0 ? this.filtered[0] : value;
+
+                    if (!this.selected.includes(toAdd)) {
+                        this.selected.push(toAdd);
+                        this.input = '';
+                    }
+                },
+                addVibe(vibe) {
+                    if (!this.selected.includes(vibe)) {
+                        this.selected.push(vibe);
+                        this.input = '';
+                    }
+                },
+                remove(vibe) {
+                    this.selected = this.selected.filter(v => v !== vibe);
+                }
+            }
+        };
+
+        // Create Vue app
+        createApp({
+            components: {
+                'keyword-selector': SelectorComponent,
+            }
+        }).mount('#app');
+    </script>
+
+<p>Choose the parameters of your minigame.</p>
+<form>
+<fieldset>
+    <legend>Theme</legend>
+    <input type="radio" name="theme" id="space" checked>
+    <label htmlFor="space">Space</label>
+    <input type="radio" name="theme" id="city" >
+    <label htmlFor="city">City</label>
+    <input type="radio" name="theme" id="desert" >
+    <label htmlFor="desert">Desert</label>
+    <input type="radio" name="theme" id="fantasy" >
+    <label htmlFor="fantasy">Fantasy</label>
+    <input type="radio" name="theme" id="spider" >
+    <label htmlFor="spider">Spider</label>
+</fieldset>
+    <fieldset>
+        <legend>Game Type</legend>
+        <input type="radio" name="type" id="arcade" checked>
+        <label htmlFor="arcade">Arcade</label>
+        <input type="radio" name="type" id="clicker" >
+        <label htmlFor="clicker">Clicker</label>
+        <input type="radio" name="type" id="platformer" >
+        <label htmlFor="platformer">Platformer</label>
+        <input type="radio" name="type" id="puzzle" >
+        <label htmlFor="puzzle">Puzzle</label>
+    </fieldset>
+<fieldset>
+    <legend>Extra Details</legend>
+    <input type="text" maxlength="50">
+</fieldset>
+<input type="submit">
+</form>
+{% endblock %}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ScribbleBug{% endblock %}</title>
+    <meta name="title" content="ScribbleBug">
+    <meta name="description" content="Make and share fun minigames with your friends!">
+
+    <!-- TODO: make a real favicon -->
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='100' font-size='100'>🕷️</text></svg>">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        .brand-head {
+            text-decoration: inherit;
+            color: inherit;
+            font-size: 2rem;
+            font-family: 'Segoe Print', 'Bradley Hand', Chilanka, TSCu_Comic, casual, cursive;
+            white-space: nowrap;
+        }
+
+        .brand-head::before {
+            content: "🕷️🖌️";
+            padding: 0 10px 0 0;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+    <script type="importmap">
+        {
+            "imports": {
+                "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+            }
+        }
+    </script>
+</head>
+<body>
+<header>
+    <div class="container" style="display: flex; justify-content: space-between">
+        <a href="/" class="brand-head">ScribbleBug</a>
+        <nav>
+            {% if request.user.is_authenticated %}
+                <ul><a href="{% url 'logout' %}">Logout</a></ul>
+            {% else %}
+                <ul><a href="{% url 'social:begin' 'auth0' %}">Login</a></ul>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+<main class="container">
+    {% block content %}
+    {% endblock %}
+</main>
+</body>
+</html>
